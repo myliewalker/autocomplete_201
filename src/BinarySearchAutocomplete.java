@@ -105,6 +105,7 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	 */
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
+		if (k == 0) return null;
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		for (Term t : myTerms) {
 			if (!t.getWord().startsWith(prefix))
@@ -122,36 +123,5 @@ public class BinarySearchAutocomplete implements Autocompletor {
 			ret.addFirst(pq.remove());
 		}
 		return ret;
-		
-//		Comparator<Term> c = new Comparator<Term>() {
-//			@Override
-//			public int compare(Term o1, Term o2) {
-//				return o1.compareTo(o2);
-//		};
-		
-//		Comparator<Term> c = Comparator.naturalOrder();
-//		
-//		ArrayList<Term> matches = myTerms.subList(firstIndex(Arrays.asList(myTerms), new Term(prefix, 1), c), 
-//				lastIndex(Arrays.asList(myTerms), new Term(prefix, 1), c));
-//		if (matches.size() <= k) return matches;
-//		
-//		PriorityQueue<String> pq = new PriorityQueue<>();
-//		for (Term str : matches) {
-//			pq.add(str.getWord());
-//			if (pq.size() > k) {
-//				pq.remove();
-//			}
-//		}
-//		LinkedList<String> ret = new LinkedList<>();
-//		while (pq.size() > 0) {
-//			ret.addFirst(pq.remove());
-//		}
-//		
-//		ArrayList<Term> matches1 = new ArrayList<>();
-//		for (String s : ret) {
-//			matches1.add(new Term(s, 1));
-//		}
-//		
-//		return matches1;
 	}
 }
