@@ -99,27 +99,59 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	 * @return An array of the k words with the largest weights among all words
 	 *         starting with prefix, in descending weight order. If less than k
 	 *         such words exist, return an array containing all those words If
-	 *         no such words exist, reutrn an empty array
+	 *         no such words exist, return an empty array
 	 * @throws a
 	 *             NullPointerException if prefix is null
 	 */
 	@Override
-	public List<Term> topMatches(String prefix, int k) {
-
-		ArrayList<Term> list = myTerms.subList(firstIndex(myTerms, prefix, comp), 
-				lastIndex(myTerms, prefix, comp));
-		
-		//or put everything in a priority queue and sort it
-		PriorityQueue<String> pq = new PriorityQueue<>();
-		for (Term str : list) {
-			pq.add(str.getWord());
-			if (pq.size() > k) {
+	public List<Term> topMatches(String prefix, int k) {	
+		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
+		for (Term t : myTerms) {
+			if (!t.getWord().startsWith(prefix))
+				continue;
+			if (pq.size() < k) {
+				pq.add(t);
+			} else if (pq.peek().getWeight() < t.getWeight()) {
 				pq.remove();
+				pq.add(t);
 			}
 		}
-		LinkedList<String> ret = new LinkedList<>();
-		while (pq.size() > 0) {
+		int numResults = Math.min(k, pq.size());
+		LinkedList<Term> ret = new LinkedList<>();
+		for (int i = 0; i < numResults; i++) {
 			ret.addFirst(pq.remove());
 		}
+		return ret;
+		
+//		Comparator<Term> c = new Comparator<Term>() {
+//			@Override
+//			public int compare(Term o1, Term o2) {
+//				return o1.compareTo(o2);
+//		};
+		
+//		Comparator<Term> c = Comparator.naturalOrder();
+//		
+//		ArrayList<Term> matches = myTerms.subList(firstIndex(Arrays.asList(myTerms), new Term(prefix, 1), c), 
+//				lastIndex(Arrays.asList(myTerms), new Term(prefix, 1), c));
+//		if (matches.size() <= k) return matches;
+//		
+//		PriorityQueue<String> pq = new PriorityQueue<>();
+//		for (Term str : matches) {
+//			pq.add(str.getWord());
+//			if (pq.size() > k) {
+//				pq.remove();
+//			}
+//		}
+//		LinkedList<String> ret = new LinkedList<>();
+//		while (pq.size() > 0) {
+//			ret.addFirst(pq.remove());
+//		}
+//		
+//		ArrayList<Term> matches1 = new ArrayList<>();
+//		for (String s : ret) {
+//			matches1.add(new Term(s, 1));
+//		}
+//		
+//		return matches1;
 	}
 }
