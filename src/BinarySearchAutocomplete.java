@@ -105,7 +105,8 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	 */
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
-		if (k == 0) return null;
+		LinkedList<Term> ret = new LinkedList<>();
+		if (k == 0) return ret;
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		for (Term t : myTerms) {
 			if (!t.getWord().startsWith(prefix))
@@ -118,7 +119,6 @@ public class BinarySearchAutocomplete implements Autocompletor {
 			}
 		}
 		int numResults = Math.min(k, pq.size());
-		LinkedList<Term> ret = new LinkedList<>();
 		for (int i = 0; i < numResults; i++) {
 			ret.addFirst(pq.remove());
 		}
