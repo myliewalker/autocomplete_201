@@ -78,9 +78,6 @@ public class BinarySearchLibrary {
 				high = mid;
 			}
 		}
-//		if (list.get(low) == target) {
-//			return low;
-//		}
 		return -1;
 	}
 	
