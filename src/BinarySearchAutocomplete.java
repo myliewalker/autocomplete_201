@@ -110,7 +110,7 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		if (k < 0) {
 			throw new IllegalArgumentException("Illegal value of k:"+k);
 		}
-//		if (k == 0) return ret;
+		if (k == 0) return ret;
 		
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		//issue: the size of ret is too small--needs to add the last element
