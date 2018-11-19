@@ -116,8 +116,8 @@ public class BinarySearchAutocomplete implements Autocompletor {
 			}
 		};
 		//issue: the size of ret is too small--needs to add the last element
-		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
-				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
+		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); 
+				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); i++) {
 			if (pq.size() <= k) {
 				pq.add(myTerms[i]);
 			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
