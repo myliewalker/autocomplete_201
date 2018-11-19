@@ -106,30 +106,16 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
-//		ArrayList<Term> matches = new ArrayList<>();
 		if (k == 0) return ret;
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
-		Comparator<Term> c = new Comparator<Term>() {
-			public int compare(Term v, Term w) {
-//				for (int i = 0; i < Math.min(k, Math.min(v.getWord().length(), w.getWord().length())); i++) {
-//					if(v.getWord().charAt(i) != w.getWord().charAt(i)) {
-//						return v.getWord().charAt(i) - w.getWord().charAt(i);
-//					}
-//				}
-//				if (v.getWord().length() < k || w.getWord().length() < k) {
-//					return v.getWord().length() - w.getWord().length();
-//				}
-//				return 0;
-				return v.getWord().compareTo(w.getWord());
-			}
-		};
-		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
-				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-			if (pq.size() <= k) {
-				pq.add(myTerms[i]);
-			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
+		for (Term t : myTerms) {
+			if (!t.getWord().startsWith(prefix))
+				continue;
+			if (pq.size() < k) {
+				pq.add(t);
+			} else if (pq.peek().getWeight() < t.getWeight()) {
 				pq.remove();
-				pq.add(myTerms[i]);
+				pq.add(t);
 			}
 		}
 		int numResults = Math.min(k, pq.size());
@@ -137,26 +123,5 @@ public class BinarySearchAutocomplete implements Autocompletor {
 			ret.addFirst(pq.remove());
 		}
 		return ret;
-//		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
-//				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-//			matches.add(myTerms[i]);
-//		}
-//		Comparator<Term> w = new Comparator<Term>() {
-//			@Override
-//			public int compare(Term o1, Term o2) {
-//				if (o1.getWeight() > o2.getWeight()) {
-//					return -1;
-//				}
-//				if (o1.getWeight() < o2.getWeight()) {
-//					return 1;
-//				}
-//				return 0;
-//			}
-//		};
-//		matches.sort(w);
-//		if (matches.size() <= k) return matches;
-//		return matches.subList(0, k);
-		
-			//currently sorting alphabetically	
 	}
 }
