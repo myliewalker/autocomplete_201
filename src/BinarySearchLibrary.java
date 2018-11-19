@@ -44,8 +44,8 @@ public class BinarySearchLibrary {
 //			}
 	        if (comp.compare(target, list.get(mid)) <= 0)
 	            high = mid;
-	        else if (comp.compare(target, list.get(mid)) > 0)
-	            low = mid;
+//	        else if (comp.compare(target, list.get(mid)) > 0)
+	        else low = mid;
 		}
 		if (comp.compare(list.get(low+1), target) == 0) return low+1;
 		return -1;
@@ -78,8 +78,8 @@ public class BinarySearchLibrary {
 //			}
 	        if (comp.compare(target, list.get(mid)) >= 0)
 	            low = mid;
-	        else if (comp.compare(target, list.get(mid)) < 0)
-	            high = mid;
+//	        else if (comp.compare(target, list.get(mid)) < 0)
+	        else high = mid;
 		}
 		if (comp.compare(list.get(high-1), target) == 0) return high-1;
 		return -1;
