@@ -106,6 +106,7 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
+		if (prefix == null) throw new NullPointerException("Prefix is null");
 		if (k == 0) return ret;
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		Comparator<Term> c = new Comparator<Term>() {
@@ -114,6 +115,7 @@ public class BinarySearchAutocomplete implements Autocompletor {
 				return new Term.PrefixOrder(k).compare(v, w);
 			}
 		};
+		//issue: the size of ret is too small--needs to add the last element
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
 				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
 			if (pq.size() <= k) {
