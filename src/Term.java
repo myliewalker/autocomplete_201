@@ -5,14 +5,10 @@
  * Description: A term and its weight.
  * 
  *************************************************************************/
-
 import java.util.Comparator;
-
 public class Term implements Comparable<Term> {
-
 	private final String myWord;
 	private final double myWeight;
-
 	/**
 	 * The constructor for the Term class. Should set the values of word and
 	 * weight to the inputs, and throw the exceptions listed below
@@ -45,18 +41,15 @@ public class Term implements Comparable<Term> {
 	public int compareTo(Term that) {
 		return myWord.compareTo(that.myWord);
 	}
-
 	/**
 	 * Getter methods, use these in other classes which use Term
 	 */
 	public String getWord() {
 		return myWord;
 	}
-
 	public double getWeight() {
 		return myWeight;
 	}
-
 	public String toString() {
 		return String.format("(%2.1f,%s)", myWeight, myWord);
 	}
@@ -66,7 +59,6 @@ public class Term implements Comparable<Term> {
 		Term other = (Term) o;
 		return this.compareTo(other) == 0;
 	}
-
 	/**
 	 * A Comparator for comparing Terms using a set number of the letters they
 	 * start with. This Comparator may be useful in writing your implementations
@@ -75,11 +67,9 @@ public class Term implements Comparable<Term> {
 	 */
 	public static class PrefixOrder implements Comparator<Term> {
 		private final int myPrefixSize;
-
 		public PrefixOrder(int r) {
 			this.myPrefixSize = r;
 		}
-
 		/**
 		 * Compares v and w lexicographically using only their first r letters.
 		 * If the first r letters are the same, then v and w should be
@@ -91,6 +81,7 @@ public class Term implements Comparable<Term> {
 		 *            - Two Terms whose words are being compared
 		 */
 		public int compare(Term v, Term w) {
+			if (myPrefixSize == 0) return 0;
 			for (int i = 0; i < Math.min(myPrefixSize, Math.min(v.getWord().length(), w.getWord().length())); i++) {
 				if(v.getWord().charAt(i) != w.getWord().charAt(i)) {
 					return v.getWord().charAt(i) - w.getWord().charAt(i);
@@ -103,32 +94,13 @@ public class Term implements Comparable<Term> {
 		}
 	
 	}
-
 	/**
 	 * A Comparator for comparing Terms using only their weights, in descending
 	 * order. This Comparator may be useful in writing your implementations of
 	 * Autocompletor
 	 *
 	 */
-	public static class ReverseWeightOrder implements Comparator<Term> {
-//		Comparator<Term> reverse = new Comparator<Term>() {
-//			@Override
-//			public int compare(Term v, Term w) {
-//				if (v.getWeight() < w.getWeight()) {
-//					return 1;
-//				}
-//				if (v.getWeight() > w.getWeight()) {
-//					return -1;
-//				}
-//				return 0;
-//			}
-//		};
-//
-//		@Override
-//		public int compare(Term o1, Term o2) {
-//			return reverse.compare(o1, o2);
-//		}
-		
+	public static class ReverseWeightOrder implements Comparator<Term> {		
 		@Override
 		public int compare(Term v, Term w) {
 			if (v.getWeight() < w.getWeight()) {
@@ -140,7 +112,6 @@ public class Term implements Comparable<Term> {
 			return 0;
 		}
 	}
-
 	/**
 	 * A Comparator for comparing Terms using only their weights, in ascending
 	 * order. This Comparator may be useful in writing your implementations of
@@ -148,24 +119,6 @@ public class Term implements Comparable<Term> {
 	 *
 	 */
 	public static class WeightOrder implements Comparator<Term> {
-//		Comparator<Term> inOrder = new Comparator<Term>() {
-//			@Override
-//			public int compare(Term v, Term w) {
-//				if (v.getWeight() < w.getWeight()) {
-//					return -1;
-//				}
-//				if (v.getWeight() > w.getWeight()) {
-//					return 1;
-//				}
-//				return 0;
-//			}
-//		};
-//		
-//		@Override
-//		public int compare(Term o1, Term o2) {
-//			return inOrder.compare(o1, o2);
-//		}
-		
 		@Override
 		public int compare(Term v, Term w) {
 			if (v.getWeight() < w.getWeight()) {
