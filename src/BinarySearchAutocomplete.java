@@ -107,22 +107,23 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
 		if (prefix == null) throw new NullPointerException("Prefix is null");
+		if (k < 0) {
+			throw new IllegalArgumentException("Illegal value of k:"+k);
+		}
 		if (k == 0) return ret;
+		
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
-		Comparator<Term> c = new Comparator<Term>() {
-			public int compare(Term v, Term w) {
-				if (v.getWord().equals("") || w.getWord().equals("")) return 0;
-				return new Term.PrefixOrder(k).compare(v, w);
-			}
-		};
 		//issue: the size of ret is too small--needs to add the last element
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); 
 				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); i++) {
-			if (pq.size() <= k) {
-				pq.add(myTerms[i]);
-			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
-				pq.remove();
-				pq.add(myTerms[i]);
+			Term t = myTerms[i];
+			if (!t.getWord().startsWith(prefix)) continue;
+			if (pq.size() < k) {
+				pq.add(t);
+			} 
+			else if (pq.peek().getWeight() < t.getWeight()) {
+			pq.remove();
+			pq.add(t);
 			}
 		}
 		int numResults = Math.min(k, pq.size());
