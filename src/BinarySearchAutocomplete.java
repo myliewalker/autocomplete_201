@@ -106,30 +106,41 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
-//		if (prefix == null) throw new NullPointerException("Prefix is null");
 		if (k < 0) {
 			throw new IllegalArgumentException("Illegal value of k:"+k);
 		}
-		if (k == 0) return ret;
 		
+		Comparator<Term> c = new Term.PrefixOrder(prefix.length());
+//		for (Term t : myTerms) {
+//			System.out.println(t);
+//		}
+		if (BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0 ||
+				BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0) {
+			return ret;
+		}
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
-		//issue: the size of ret is too small--needs to add the last element
-		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); 
-				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), new Term.PrefixOrder(k)); i++) {
+		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
+				i <= BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
 			Term t = myTerms[i];
-			if (!t.getWord().startsWith(prefix)) continue;
-			if (pq.size() < k) {
-				pq.add(t);
-			} 
-			else if (pq.peek().getWeight() < t.getWeight()) {
-			pq.remove();
-			pq.add(t);
-			}
+//			System.out.print(t);
+//			if (!t.getWord().startsWith(prefix)) continue;
+//			if (pq.size() <= k) {
+//				pq.add(t);
+//			} 
+//			else if (pq.peek().getWeight() < t.getWeight()) {
+//				pq.remove();
+//				pq.add(t);
+//			}
+			ret.add(t);
 		}
-		int numResults = Math.min(k, pq.size());
-		for (int i = 0; i < numResults; i++) {
-			ret.addFirst(pq.remove());
-		}
-		return ret;
+//		System.out.println(ret);
+		Collections.sort(ret, new Term.ReverseWeightOrder());
+		System.out.println(ret);
+//		int numResults = Math.min(k, pq.size());
+//		for (int i = 0; i < numResults; i++) {
+//			ret.addFirst(pq.remove());
+//		}
+		int numResults = Math.min(k, ret.size());
+		return ret.subList(0, numResults);
 	}
 }
