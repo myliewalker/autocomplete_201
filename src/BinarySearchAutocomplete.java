@@ -106,11 +106,11 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
-		if (prefix == null) throw new NullPointerException("Prefix is null");
+//		if (prefix == null) throw new NullPointerException("Prefix is null");
 		if (k < 0) {
 			throw new IllegalArgumentException("Illegal value of k:"+k);
 		}
-		if (k == 0) return ret;
+//		if (k == 0) return ret;
 		
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		//issue: the size of ret is too small--needs to add the last element
