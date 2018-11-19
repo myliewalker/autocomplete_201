@@ -81,7 +81,7 @@ public class Term implements Comparable<Term> {
 		 *            - Two Terms whose words are being compared
 		 */
 		public int compare(Term v, Term w) {
-			if (myPrefixSize == 0 || v.getWord().equals("") || w.getWord().equals("")) return 0;
+			if (myPrefixSize == 0) return 0;
 			for (int i = 0; i < Math.min(myPrefixSize, Math.min(v.getWord().length(), w.getWord().length())); i++) {
 				if(v.getWord().charAt(i) != w.getWord().charAt(i)) {
 					return v.getWord().charAt(i) - w.getWord().charAt(i);
