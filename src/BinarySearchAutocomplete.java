@@ -110,12 +110,13 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		Comparator<Term> c = new Comparator<Term>() {
 			public int compare(Term v, Term w) {
+				if (v.getWord().equals("") || w.getWord().equals("")) return 0;
 				return new Term.PrefixOrder(k).compare(v, w);
 			}
 		};
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
 				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-			if (pq.size() <= k) {
+			if (pq.size() < k) {
 				pq.add(myTerms[i]);
 			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
 				pq.remove();
