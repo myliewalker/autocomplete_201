@@ -36,12 +36,16 @@ public class BinarySearchLibrary {
 		while (low+1 != high) {
 			if (comp.compare(list.get(low+1), target) == 0) return low+1;
 			mid = (low + high)/2;
-			if (list.subList(low+1, mid+1).contains(target)) {
-				high = mid;
-			}
-			else {
-				low = mid;
-			}
+//			if (list.subList(low+1, mid+1).contains(target)) {
+//				high = mid;
+//			}
+//			else {
+//				low = mid;
+//			}
+	        if (comp.compare(target, list.get(mid)) <= 0)
+	            high = mid;
+	        else if (comp.compare(target, list.get(mid)) > 0)
+	            low = mid;
 		}
 		if (comp.compare(list.get(low+1), target) == 0) return low+1;
 		return -1;
@@ -66,12 +70,16 @@ public class BinarySearchLibrary {
 		while (low+1 != high) {
 			if (comp.compare(list.get(high-1), target) == 0) return high-1;
 			mid = (low + high)/2;
-			if (list.subList(mid, high).contains(target)) {
-				low = mid;
-			}
-			else {
-				high = mid;
-			}
+//			if (list.subList(mid, high).contains(target)) {
+//				low = mid;
+//			}
+//			else {
+//				high = mid;
+//			}
+	        if (comp.compare(target, list.get(mid)) >= 0)
+	            low = mid;
+	        else if (comp.compare(target, list.get(mid)) < 0)
+	            high = mid;
 		}
 		if (comp.compare(list.get(high-1), target) == 0) return high-1;
 		return -1;
