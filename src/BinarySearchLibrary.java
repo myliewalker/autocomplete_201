@@ -1,80 +1,132 @@
 import java.util.*;
 
-public class BinarySearchLibrary {
-	
-	public static <T>
-	    int firstIndexSlow(List<T> list, 
-	    		           T target, Comparator<T> comp) {
-		int index = Collections.binarySearch(list, target,comp);
-		
-		if (index < 0) return index;
-		
-		while (0 <= index && comp.compare(list.get(index),target) == 0) {
-			index -= 1;
-		}
-		return index+1;
-	}
-	
+/**
+ * 
+ * Using a sorted array of Term objects, this implementation uses binary search
+ * to find the top term(s).
+ * 
+ * @author Austin Lu, adapted from Kevin Wayne
+ * @author Jeff Forbes
+ * @author Owen Astrachan in Fall 2018, revised API
+ */
+public class BinarySearchAutocomplete implements Autocompletor {
+
+	Term[] myTerms;
+
 	/**
-	 * Uses binary search to find the index of the first object in parameter
-	 * list -- the first object o such that comp.compare(o,target) == 0.
+	 * Given arrays of words and weights, initialize myTerms to a corresponding
+	 * array of Terms sorted lexicographically.
 	 * 
-	 * This method should not call comparator.compare() more than 1+log n times
-	 * @param list is the list of objects being searched
-	 * @param target is the object being searched for
-	 * @param comp is how comparisons are made
-	 * @return index i such that comp.compare(list.get(i),target) == 0
-	 * and there is no index < i such that this is true. Return -1
-	 * if there is no such object in list.
+	 * This constructor is written for you, but you may make modifications to
+	 * it.
+	 * 
+	 * @param terms
+	 *            - A list of words to form terms from
+	 * @param weights
+	 *            - A corresponding list of weights, such that terms[i] has
+	 *            weight[i].
+	 * @return a BinarySearchAutocomplete whose myTerms object has myTerms[i] =
+	 *         a Term with word terms[i] and weight weights[i].
+	 * @throws a
+	 *             NullPointerException if either argument passed in is null
 	 */
-	
-	public static <T> int firstIndex(List<T> list, T target, Comparator<T> comp) {
-		int low = -1;
-		int mid;
-		int high = list.size()-1;
-		if (list.size() == 0) return -1;
-		while (low+1 != high) {
-			if (comp.compare(list.get(low+1), target) == 0) return low+1;
-			mid = (low + high)/2;
-			if (list.subList(low+1, mid+1).contains(target)) {
-				high = mid;
-			}
-			else {
-				low = mid;
-			}
+	public BinarySearchAutocomplete(String[] terms, double[] weights) {
+		if (terms == null || weights == null) {
+			throw new NullPointerException("One or more arguments null");
 		}
-		if (comp.compare(list.get(low+1), target) == 0) return low+1;
-		return -1;
+		
+		myTerms = new Term[terms.length];
+		
+		for (int i = 0; i < terms.length; i++) {
+			myTerms[i] = new Term(terms[i], weights[i]);
+		}
+		
+		Arrays.sort(myTerms);
 	}
+
 	/**
-	 * Uses binary search to find the index of the last object in parameter
-	 * list -- the first object o such that comp.compare(o,target) == 0.
+	 * Uses binary search to find the index of the first Term in the passed in
+	 * array which is considered equivalent by a comparator to the given key.
+	 * This method should not call comparator.compare() more than 1+log n times,
+	 * where n is the size of a.
 	 * 
-	 * This method should not call comparator.compare() more than 1+log n times
-	 * @param list is the list of objects being searched
-	 * @param target is the object being searched for
-	 * @param comp is how comparisons are made
-	 * @return index i such that comp.compare(list.get(i),target) == 0
-	 * and there is no index > i such that this is true. Return -1
-	 * if there is no such object in list.
+	 * @param a
+	 *            - The array of Terms being searched
+	 * @param key
+	 *            - The key being searched for.
+	 * @param comparator
+	 *            - A comparator, used to determine equivalency between the
+	 *            values in a and the key.
+	 * @return The first index i for which comparator considers a[i] and key as
+	 *         being equal. If no such index exists, return -1 instead.
 	 */
-	public static <T> int lastIndex(List<T> list, T target, Comparator<T> comp) {	
-		int low = 0;
-		int mid;
-		int high = list.size();
-		if (list.size() == 0) return -1;
-		while (low != high) {
-			if (comp.compare(list.get(high-1), target) == 0) return high-1;
-			mid = (low + high)/2;
-			if (list.subList(mid, high).contains(target)) {
-				low = mid;
+	public static int firstIndexOf(Term[] a, Term key, Comparator<Term> comparator) {	
+		int index = BinarySearchLibrary.firstIndex(Arrays.asList(a), key, comparator);
+		return index;
+	}
+
+	/**
+	 * The same as firstIndexOf, but instead finding the index of the last Term.
+	 * 
+	 * @param a
+	 *            - The array of Terms being searched
+	 * @param key
+	 *            - The key being searched for.
+	 * @param comparator
+	 *            - A comparator, used to determine equivalency between the
+	 *            values in a and the key.
+	 * @return The last index i for which comparator considers a[i] and key as
+	 *         being equal. If no such index exists, return -1 instead.
+	 */
+	public static int lastIndexOf(Term[] a, Term key, Comparator<Term> comparator) {
+		int index = BinarySearchLibrary.lastIndex(Arrays.asList(a), key, comparator);
+		return index;
+	}
+
+	/**
+	 * Required by the Autocompletor interface. Returns an array containing the
+	 * k words in myTerms with the largest weight which match the given prefix,
+	 * in descending weight order. If less than k words exist matching the given
+	 * prefix (including if no words exist), then the array instead contains all
+	 * those words. e.g. If terms is {air:3, bat:2, bell:4, boy:1}, then
+	 * topKMatches("b", 2) should return {"bell", "bat"}, but topKMatches("a",
+	 * 2) should return {"air"}
+	 * 
+	 * @param prefix
+	 *            - A prefix which all returned words must start with
+	 * @param k
+	 *            - The (maximum) number of words to be returned
+	 * @return An array of the k words with the largest weights among all words
+	 *         starting with prefix, in descending weight order. If less than k
+	 *         such words exist, return an array containing all those words If
+	 *         no such words exist, return an empty array
+	 * @throws a
+	 *             NullPointerException if prefix is null
+	 */
+	@Override
+	public List<Term> topMatches(String prefix, int k) {	
+		LinkedList<Term> ret = new LinkedList<>();
+		if (k == 0) return ret;
+		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
+		Comparator<Term> c = new Comparator<Term>() {
+			public int compare(Term v, Term w) {
+				if (v.getWord().equals("") || w.getWord().equals("")) return 0;
+				return new Term.PrefixOrder(k).compare(v, w);
 			}
-			else {
-				high = mid;
+		};
+		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
+				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
+			if (pq.size() <= k) {
+				pq.add(myTerms[i]);
+			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
+				pq.remove();
+				pq.add(myTerms[i]);
 			}
 		}
-		if (comp.compare(list.get(high-1), target) == 0) return high-1;
-		return -1;
+		int numResults = Math.min(k, pq.size());
+		for (int i = 0; i < numResults; i++) {
+			ret.addFirst(pq.remove());
+		}
+		return ret;
 	}
-	
 }
