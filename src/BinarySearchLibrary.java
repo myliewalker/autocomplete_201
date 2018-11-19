@@ -1,4 +1,5 @@
 import java.util.*;
+
 public class BinarySearchLibrary {
 	
 	public static <T>
@@ -29,11 +30,12 @@ public class BinarySearchLibrary {
 	
 	public static <T> int firstIndex(List<T> list, T target, Comparator<T> comp) {
 		int low = -1;
+		int mid;
 		int high = list.size()-1;
 		if (list.size() == 0) return -1;
 		while (low+1 != high) {
 			if (comp.compare(list.get(low+1), target) == 0) return low+1;
-			int mid = (low+high)/2;
+			mid = (low + high)/2;
 			if (list.subList(low+1, mid+1).contains(target)) {
 				high = mid;
 			}
@@ -41,9 +43,7 @@ public class BinarySearchLibrary {
 				low = mid;
 			}
 		}
-		if (list.get(high) == target) {
-			return high;
-		}
+		if (comp.compare(list.get(low+1), target) == 0) return low+1;
 		return -1;
 	}
 	/**
