@@ -106,7 +106,7 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	@Override
 	public List<Term> topMatches(String prefix, int k) {	
 		LinkedList<Term> ret = new LinkedList<>();
-		ArrayList<Term> matches = new ArrayList<>();
+//		ArrayList<Term> matches = new ArrayList<>();
 		if (k == 0) return ret;
 		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		Comparator<Term> c = new Comparator<Term>() {
@@ -124,38 +124,38 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		};
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
 				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-			matches.add(myTerms[i]);
-		}
-		Comparator<Term> w = new Comparator<Term>() {
-			@Override
-			public int compare(Term o1, Term o2) {
-				if (o1.getWeight() > o2.getWeight()) {
-					return -1;
-				}
-				if (o1.getWeight() < o2.getWeight()) {
-					return 1;
-				}
-				return 0;
+			if (pq.size() <= k) {
+				pq.add(myTerms[i]);
+			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
+				pq.remove();
+				pq.add(myTerms[i]);
 			}
-		};
-		matches.sort(w);
-		if (matches.size() <= k) return matches;
-		return matches.subList(0, k);
+		}
+		int numResults = Math.min(k, pq.size());
+		for (int i = 0; i < numResults; i++) {
+			ret.addFirst(pq.remove());
+		}
+		return ret;
+//		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
+//				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
+//			matches.add(myTerms[i]);
+//		}
+//		Comparator<Term> w = new Comparator<Term>() {
+//			@Override
+//			public int compare(Term o1, Term o2) {
+//				if (o1.getWeight() > o2.getWeight()) {
+//					return -1;
+//				}
+//				if (o1.getWeight() < o2.getWeight()) {
+//					return 1;
+//				}
+//				return 0;
+//			}
+//		};
+//		matches.sort(w);
+//		if (matches.size() <= k) return matches;
+//		return matches.subList(0, k);
 		
 			//currently sorting alphabetically	
-//		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
-//				i <= BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-//			if (pq.size() <= k) {
-//				pq.add(myTerms[i]);
-//			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
-//				pq.remove();
-//				pq.add(myTerms[i]);
-//			}
-//		}
-//		int numResults = Math.min(k, pq.size());
-//		for (int i = 0; i < numResults; i++) {
-//			ret.addFirst(pq.remove());
-//		}
-//		return ret;
 	}
 }
