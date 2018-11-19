@@ -115,8 +115,8 @@ public class BinarySearchAutocomplete implements Autocompletor {
 			}
 		};
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
-				i < BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
-			if (pq.size() < k) {
+				i <= BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
+			if (pq.size() <= k) {
 				pq.add(myTerms[i]);
 			} else if (pq.peek().getWeight() < myTerms[i].getWeight()) {
 				pq.remove();
