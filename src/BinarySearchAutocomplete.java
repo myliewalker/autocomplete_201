@@ -8,6 +8,7 @@ import java.util.*;
  * @author Austin Lu, adapted from Kevin Wayne
  * @author Jeff Forbes
  * @author Owen Astrachan in Fall 2018, revised API
+ * @author Mylie Walker, implemented topMatches
  */
 public class BinarySearchAutocomplete implements Autocompletor {
 
@@ -20,11 +21,9 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	 * This constructor is written for you, but you may make modifications to
 	 * it.
 	 * 
-	 * @param terms
-	 *            - A list of words to form terms from
-	 * @param weights
-	 *            - A corresponding list of weights, such that terms[i] has
-	 *            weight[i].
+	 * @param terms a list of words to form terms from
+	 * @param weights a corresponding list of weights, such that terms[i] has
+	 *        weight[i].
 	 * @return a BinarySearchAutocomplete whose myTerms object has myTerms[i] =
 	 *         a Term with word terms[i] and weight weights[i].
 	 * @throws a
@@ -50,13 +49,10 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	 * This method should not call comparator.compare() more than 1+log n times,
 	 * where n is the size of a.
 	 * 
-	 * @param a
-	 *            - The array of Terms being searched
-	 * @param key
-	 *            - The key being searched for.
-	 * @param comparator
-	 *            - A comparator, used to determine equivalency between the
-	 *            values in a and the key.
+	 * @param a the array of Terms being searched
+	 * @param key the key being searched for.
+	 * @param comparator a comparator, used to determine equivalency between the
+	 *        values in a and the key.
 	 * @return The first index i for which comparator considers a[i] and key as
 	 *         being equal. If no such index exists, return -1 instead.
 	 */
@@ -68,13 +64,10 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	/**
 	 * The same as firstIndexOf, but instead finding the index of the last Term.
 	 * 
-	 * @param a
-	 *            - The array of Terms being searched
-	 * @param key
-	 *            - The key being searched for.
-	 * @param comparator
-	 *            - A comparator, used to determine equivalency between the
-	 *            values in a and the key.
+	 * @param a the array of Terms being searched
+	 * @param key the key being searched for.
+	 * @param comparator a comparator, used to determine equivalency between the
+	 *        values in a and the key.
 	 * @return The last index i for which comparator considers a[i] and key as
 	 *         being equal. If no such index exists, return -1 instead.
 	 */
@@ -84,18 +77,11 @@ public class BinarySearchAutocomplete implements Autocompletor {
 	}
 
 	/**
-	 * Required by the Autocompletor interface. Returns an array containing the
-	 * k words in myTerms with the largest weight which match the given prefix,
-	 * in descending weight order. If less than k words exist matching the given
-	 * prefix (including if no words exist), then the array instead contains all
-	 * those words. e.g. If terms is {air:3, bat:2, bell:4, boy:1}, then
-	 * topKMatches("b", 2) should return {"bell", "bat"}, but topKMatches("a",
-	 * 2) should return {"air"}
+	 * Returns an array containing k words in myTerms with the largest weight which 
+	 * match the given prefix, in descending weight order.
 	 * 
-	 * @param prefix
-	 *            - A prefix which all returned words must start with
-	 * @param k
-	 *            - The (maximum) number of words to be returned
+	 * @param prefix a prefix which all returned words must start with
+	 * @param k the (maximum) number of words to be returned
 	 * @return An array of the k words with the largest weights among all words
 	 *         starting with prefix, in descending weight order. If less than k
 	 *         such words exist, return an array containing all those words If
@@ -111,9 +97,6 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		}
 		
 		Comparator<Term> c = new Term.PrefixOrder(prefix.length());
-//		for (Term t : myTerms) {
-//			System.out.println(t);
-//		}
 		if (BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0 ||
 				BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0) {
 			return ret;
@@ -122,24 +105,10 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
 				i <= BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
 			Term t = myTerms[i];
-//			System.out.print(t);
-//			if (!t.getWord().startsWith(prefix)) continue;
-//			if (pq.size() <= k) {
-//				pq.add(t);
-//			} 
-//			else if (pq.peek().getWeight() < t.getWeight()) {
-//				pq.remove();
-//				pq.add(t);
-//			}
 			ret.add(t);
 		}
-//		System.out.println(ret);
 		Collections.sort(ret, new Term.ReverseWeightOrder());
 		System.out.println(ret);
-//		int numResults = Math.min(k, pq.size());
-//		for (int i = 0; i < numResults; i++) {
-//			ret.addFirst(pq.remove());
-//		}
 		int numResults = Math.min(k, ret.size());
 		return ret.subList(0, numResults);
 	}

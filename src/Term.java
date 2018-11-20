@@ -13,10 +13,8 @@ public class Term implements Comparable<Term> {
 	 * The constructor for the Term class. Should set the values of word and
 	 * weight to the inputs, and throw the exceptions listed below
 	 * 
-	 * @param word
-	 *            The word this term consists of
-	 * @param weight
-	 *            The weight of this word in the Autocomplete algorithm
+	 * @param word the word this term consists of
+	 * @param weight the weight of this word in the Autocomplete algorithm
 	 * @throws NullPointerException
 	 *             if word is null
 	 * @throws IllegalArgumentException
@@ -25,12 +23,10 @@ public class Term implements Comparable<Term> {
 	public Term(String word, double weight) {
 		if (word == null) {
 			throw new NullPointerException("Word is null");
-			//myWord = "";
 		}		
 		else myWord = word;
 		if (weight < 0) {
 			throw new IllegalArgumentException("Negative weight "+ weight);
-			//myWeight = 0;
 		}
 		else myWeight = weight;
 	}
@@ -61,24 +57,23 @@ public class Term implements Comparable<Term> {
 	}
 	/**
 	 * A Comparator for comparing Terms using a set number of the letters they
-	 * start with. This Comparator may be useful in writing your implementations
-	 * of Autocompletors.
-	 *
+	 * start with.
 	 */
 	public static class PrefixOrder implements Comparator<Term> {
 		private final int myPrefixSize;
+		/**
+		 * 
+		 * @param r the number of letters used to compare the terms
+		 */
 		public PrefixOrder(int r) {
 			this.myPrefixSize = r;
 		}
 		/**
 		 * Compares v and w lexicographically using only their first r letters.
-		 * If the first r letters are the same, then v and w should be
-		 * considered equal. This method should take O(r) to run, and be
-		 * independent of the length of v and w's length. You can access the
-		 * Strings to compare using v.word and w.word.
 		 * 
-		 * @param v/w
-		 *            - Two Terms whose words are being compared
+		 * @param v/w two Terms whose words are being compared
+		 * @return a negative number if v is less than w, a positive number if 
+		 * 		   v is greater than w, or 0 if v and w are considered equal
 		 */
 		public int compare(Term v, Term w) {
 			if (myPrefixSize == 0) return 0;
@@ -96,12 +91,17 @@ public class Term implements Comparable<Term> {
 	}
 	/**
 	 * A Comparator for comparing Terms using only their weights, in descending
-	 * order. This Comparator may be useful in writing your implementations of
-	 * Autocompletor
-	 *
+	 * order.
 	 */
 	public static class ReverseWeightOrder implements Comparator<Term> {		
 		@Override
+		/**
+		 * 
+		 * @param v/w the terms whose weights are being compared
+		 * @return a positive number if w's weight is greater than v's, a negative
+		 * 		   number if v's weight is greater than w's, or 0 if the terms have
+		 * 		   the same weights
+		 */
 		public int compare(Term v, Term w) {
 			if (v.getWeight() < w.getWeight()) {
 				return 1;
@@ -114,12 +114,17 @@ public class Term implements Comparable<Term> {
 	}
 	/**
 	 * A Comparator for comparing Terms using only their weights, in ascending
-	 * order. This Comparator may be useful in writing your implementations of
-	 * Autocompletor
-	 *
+	 * order.
 	 */
 	public static class WeightOrder implements Comparator<Term> {
 		@Override
+		/**
+		 * 
+		 * @param v/w the terms whose weights are being compared
+		 * @return a positive number if v's weight is greater than w's, a negative
+		 * 		   number if w's weight is greater than v's, or 0 if the terms have
+		 * 		   the same weights
+		 */
 		public int compare(Term v, Term w) {
 			if (v.getWeight() < w.getWeight()) {
 				return -1;

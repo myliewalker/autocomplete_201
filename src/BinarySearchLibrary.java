@@ -1,5 +1,13 @@
 import java.util.*;
-
+/**
+ * 
+ * Finds the first and last indexes of items beginning with a specified prefix
+ * 
+ * @author Austin Lu, adapted from Kevin Wayne
+ * @author Jeff Forbes
+ * @author Owen Astrachan in Fall 2018, revised API
+ * @author Mylie Walker, implemented topMatches
+ */
 public class BinarySearchLibrary {
 	
 	public static <T>
@@ -19,7 +27,6 @@ public class BinarySearchLibrary {
 	 * Uses binary search to find the index of the first object in parameter
 	 * list -- the first object o such that comp.compare(o,target) == 0.
 	 * 
-	 * This method should not call comparator.compare() more than 1+log n times
 	 * @param list is the list of objects being searched
 	 * @param target is the object being searched for
 	 * @param comp is how comparisons are made
@@ -44,9 +51,8 @@ public class BinarySearchLibrary {
 	}
 	/**
 	 * Uses binary search to find the index of the last object in parameter
-	 * list -- the first object o such that comp.compare(o,target) == 0.
+	 * list -- the last object o such that comp.compare(o,target) == 0.
 	 * 
-	 * This method should not call comparator.compare() more than 1+log n times
 	 * @param list is the list of objects being searched
 	 * @param target is the object being searched for
 	 * @param comp is how comparisons are made

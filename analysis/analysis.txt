@@ -1,11 +1,53 @@
-Put your name and netid here
+Mylie Walker
+mgw25
 
 (1) Run the program BenchmarkForAutocomplete and copy/paste the 
 results here this for #matches = 20
+	search	size	#match	binary	brute
+			456976	20		0.1415	0.0117
+	a		17576	20		0.0058	0.0125
+	b		17576	20		0.0087	0.0071
+	c		17576	20		0.0056	0.0054
+	x		17576	20		0.0058	0.0057
+	y		17576	20		0.0054	0.0053
+	z		17576	20		0.0061	0.0067
+	aa		676		20		0.0002	0.0053
+	az		676		20		0.0002	0.0061
+	za		676		20		0.0002	0.0054
+	zz		676		20		0.0003	0.0063
+
 
 (2) Run the program again for #matches = 10000, paste the results, 
 and then make any conclusions about how the # matches 
 effects the runtime. 
+	search	size	#match	binary	brute
+			456976	1000	0.1472	0.0181
+	a		17576	1000	0.0060	0.0066
+	b		17576	1000	0.0065	0.0080
+	c		17576	1000	0.0053	0.0067
+	x		17576	1000	0.0074	0.0064
+	y		17576	1000	0.0053	0.0076
+	z		17576	1000	0.0053	0.0067
+	aa		676		1000	0.0002	0.0071
+	az		676		1000	0.0002	0.0075
+	za		676		1000	0.0002	0.0064
+	zz		676		1000	0.0002	0.0076
+
+	The number of matches does not have a significant effect on runtime. When the program was run using 20 
+	matches, the runtime of BinarySearchAutocomplete ranged from 0.0003 seconds for "zz" to 0.1475 seconds
+	for "". The runtime for 1000 matches was similar - it ranged from 0.0002 seconds for "zz" to 1.472 seconds
+	for "". So, the minimum runtime differed by only 0.0001 seconds, and the maximum runtime differed by only
+	0.0003 seconds. In gerneral, the runtime for both 20 matches and 1000 matches tended to decrease as the 
+	length of the search term decreases. Any differences in runtime are very small, and are therefore negligible.
+	The number of matches did not have a significant impact on the runtime of BruteAutocomplete either. When the
+	program was run using 20 matches, the smallest runtime was 0.0053 seconds for both "y" and "aa", and the 
+	largest runtime was 0.0125 seconds for "a". Using 1000 matches, the smallest runtime was 0.0064 seconds for
+	"x" and "za", and the largest runtime was 0.0181 seconds for "". The minimum runtimes differed by 0.0011 seconds,
+	and the maximum runtimes differed by 0.0056 seconds. While these differences are about five times greater than
+	those in BinarySearchAutocomplete, they are still less than a tenth of a second. Based on these results, the
+	number of matches has a greater effect on BruteAutocomplete than on BinarySearchAutocomplete. However, the 
+	changes are minimal for both methods, so the number of matches does not have a significant impact on runtime.
+
 
 (3) Copy/paste the code from BruteAutocomplete.topMatches below. 
 Explain what the Big-Oh complexity of the entire loop: 
@@ -14,12 +56,13 @@ is in terms of N, the number of elements in myTerms and
 M, the number of terms that match the prefix. 
 Assume that every priority-queue operation runs in O(log k) time. 
 Explain your answer which should be in terms of N, M, and k.
-
-        if (k < 0) {
+	public List<Term> topMatches(String prefix, int k) {
+		if (k < 0) {
 			throw new IllegalArgumentException("Illegal value of k:"+k);
 		}
 		
-        PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
+		// maintain pq of size k
+		PriorityQueue<Term> pq = new PriorityQueue<Term>(10, new Term.WeightOrder());
 		for (Term t : myTerms) {
 			if (!t.getWord().startsWith(prefix))
 				continue;
@@ -36,17 +79,65 @@ Explain your answer which should be in terms of N, M, and k.
 			ret.addFirst(pq.remove());
 		}
 		return ret;
+	}
+
+	The runtime of the for loop is O(N + Mlogk). Checking if the term starts with prefix is an O(1) operation. Since this 
+	is checked N times, it is O(N) for the entire loop. A term is only added to the PriorityQueue if its corresponding
+	word start with the prefix. Adding a term to the queue if its size is less than k is a an O(logk) operation. Lastly, 
+	removing an element from the queue is an O(logk) operation, as is adding a term. Therefore, for the entire loop,
+	the if-else statement runs in M*O(log k) time. Therefore, the entire loop runs in O(N) + O(Mlogk), or O(N + Mlogk) 
+	time.
+
 
 (4) Explain why the last for loop in BruteAutocomplete.topMatches 
 uses a LinkedList (and not an ArrayList) 
 AND why the PriorityQueue uses Term.WeightOrder to get 
 the top k heaviest matches -- rather than 
 using Term.ReverseWeightOrder.
+	Since LinkedLists uses nodes to point to the memory references of the next elements, addFirst is an O(1) operation.
+	Therefore, copying the whole PriorityQueue into a LinkedList is an O(M) operation. In contrast, ArrayLists require
+	elements to be shifted whenever a new element is added to the front of the list. Therefore, addFirst is an O(n)
+	operation when there are n elements in the list, and an O(Mn), or O(M^2) operation for the entire loop. This is 
+	significantly less efficient than using a LinkedList. Since PriorityQueue uses Term.WeightOrder, the elements in
+	PriorityQueue are sorted from smallest to biggest weight. Therefore, when the first element is removed, it becomes
+	the last element of the LinkedList. After removing all the elements from the PriorityQueue and adding them to the
+	LinkedList, the list is sorted from greatest to lowest weight. If PriorityQueue used Term.ReverseWeightOrder instead,
+	each element would have to be added to the end of the LinkedList. This would require traversing through the entire 
+	list, and would lead to a significantly greater runtime.
 
 
 (5) Explain what the runtime of the 
 BinarySearchAutocomplete.topMatches code that you 
 implemented is by copy/pasting the code below 
 and explaining your answer in terms of N, M, and k.
+	public List<Term> topMatches(String prefix, int k) {	
+		LinkedList<Term> ret = new LinkedList<>();
+		if (k < 0) {
+			throw new IllegalArgumentException("Illegal value of k:"+k);
+		}
+		
+		Comparator<Term> c = new Term.PrefixOrder(prefix.length());
+		if (BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0 ||
+				BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c) < 0) {
+			return ret;
+		}
+		for (int i = BinarySearchLibrary.firstIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); 
+				i <= BinarySearchLibrary.lastIndex(Arrays.asList(myTerms), new Term(prefix, 0), c); i++) {
+			Term t = myTerms[i];
+			ret.add(t);
+		}
+		Collections.sort(ret, new Term.ReverseWeightOrder());
+		int numResults = Math.min(k, ret.size());
+		return ret.subList(0, numResults);
+	}
+
+	The runtime of BinarySearchAutocomplete.topMatches is O(logN + MlogM). Calling BinarySearchLibrary.firstIndex 
+	is a O(logN) operation. Likewise, calling BinarySearchLibrary.lastIndex is also a O(logN) operation. Therefore,
+	establishing the beginning and end of the for loop has runtime 2(logN), which is O(logN). Since the for
+	loop starts at the first index of a term that begins with prefix and ends at the last index of the term that
+	matches prefix, it iterates M times. Each operation is O(1), so the entire body is O(M). Therefore, the entire
+	loop is O(M) + O(logN), or O(logN). Sorting the elements that match prefix is O(M logM) because there are M
+	terms and each binary search operation is O(logM). Finally, returning a list of the first k matches is an O(k)
+	operation. Therefore, the entire runtime of the method is O(logN) + O(MlogM) + O(k), which is O(logN + MlogM).
 
 
